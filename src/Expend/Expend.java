@@ -1,10 +1,15 @@
 package Expend;
 
+import java.io.Serializable;
 import java.util.Scanner;
 
-public class Expend {
-	
+import exception.EmailFormatException;
 
+public abstract class Expend implements ExpendInput, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5124264967743426116L;
 	ExpendKind kind = ExpendKind.Man;
 	String birth;
 	String name;
@@ -12,12 +17,23 @@ public class Expend {
 	String phone;
 	
 	public Expend() {
-		
+	}
+	
+	public Expend(ExpendKind kind) {
+		this.kind = kind;
 	}
 	
 	public Expend(String birth, String name) {
 		this.birth = birth;
 		this.name = name;
+	}
+	
+	public Expend(ExpendKind kind, String birth, String name, String email, String phone) {
+		this.kind = kind;
+		this.birth = birth;
+		this.name = name;
+		this.email = email;
+		this.phone = phone;			
 	}
 	
 	public Expend(String birth, String name, String email, String phone) {
@@ -55,7 +71,11 @@ public class Expend {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public void setEmail(String email) throws EmailFormatException {
+		if (!email.contains("@") && !email.equals("")) {
+			throw new EmailFormatException();
+		}
+		
 		this.email = email;
 	}
 
@@ -67,29 +87,59 @@ public class Expend {
 		this.phone = phone;
 	}
 	
-	public void printInfo() {
-		System.out.println(" Birth : " + birth);
-		System.out.println(" Name : " + name);
-		System.out.println(" Email : " + email);
-		System.out.println(" Phone: " + phone);
-		}
-
-	public void getUserInput(Scanner input) {
-		System.out.print("Consumer Birth input: ");		
+	public abstract void printInfo();
+	
+	public void setExpendBirth(Scanner input) {
+		System.out.print("Consumer Birth:");
 		String birth = input.next();
 		this.setBirth(birth);
-		
-		System.out.print("Consumer Name input: ");
+	}
+	
+	public void setExpendName(Scanner input) {
+		System.out.print("Consumer Name:");
 		String name = input.next();
 		this.setName(name);
+	}
+	
+	public void setExpendEmail(Scanner input) {
+		String email = "";
+		while (email.contains("@")) {
 		
-		System.out.print("Consumer Email input: ");
-		String email = input.next();
-		this.setEmail(email);
-		
-		System.out.print("Consumer PhoneNum input: ");
+		System.out.print("Consumer Email:");
+		email = input.next();
+		try {
+			this.setEmail(email);;
+		} catch(EmailFormatException e) {
+			System.out.println("Incorrect Email Format. put your e-mail address that contains @");
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
+	public void setExpendPhone(Scanner input) {
+		System.out.print("Consumer PhoneNum:");
 		String phone = input.next();
 		this.setPhone(phone);
+	}
+
+	public String getKindString() {
+		String skind = "none";
+		switch(this.kind) {
+		case Man:
+			skind = "Man";
+			break;
+		case Woman :
+			skind = "Woman";
+		case Boy:
+			skind = "Boy";
+			break;
+		case Girl:
+			skind = "Gril";
+			break;
+		default :
+		}
+		return skind;
 	}
 	
 }
